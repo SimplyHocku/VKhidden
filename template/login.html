@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="run">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link href="{{ url_for('css', path='/normal.css') }}" rel="stylesheet">
+    <link href="{{ url_for('css', path='/style.css') }}" rel="stylesheet">
+    <script src="../js/main.js"></script>
+</head>
+
+<body>
+    <div class="main">
+        <div class="container" id="all_content">
+            <div class="login_div">
+                <h1 class="main_title">
+                    VkHidden
+                </h1>
+                <h2>Войтиs с помощью:</h2>
+            </div>
+            <div class="form_div">
+    
+                <div class="left_form_div">
+                    <input type="radio" name="new_key" id="new_key_id" onclick="checkRadio(this)">
+                    <label for="new_key_id">Новый ключ</label>
+                </div>
+    
+                <div class="right_form_div">
+                    <input type="radio" name="new_key" id="keys" onclick="checkRadio(this)">
+                    <label for="keys" new_key_id">Выбрать из имеющихся</label>
+                </div>
+            </div>
+            <input type="button" id="login_btn" value="Войти" disabled>
+        </div>
+    </div>
+</body>
+</html>
+

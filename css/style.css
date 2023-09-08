@@ -1,0 +1,55 @@
+td {
+    /* задаем границу для всех элементов */
+    border: 3px solid grey;
+    border-radius: 1px;
+}
+
+td,
+th {
+    /* делаем отступ в ячейках, выставляем выравнивание текста */
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form_div {
+    /* height: 500px; */
+    display: flex;
+    /* flex-direction: row;
+    justify-content: center; */
+}
+
+.container {
+    width: auto;
+    padding: 0;
+    margin: 0 auto;
+}
+
+
+.table_with_key {
+   display: flex;
+   flex-direction: column;
+}
+
+.key_block {
+    display: flex;
+    flex-direction: row;
+
+    margin-bottom: 5px;
+
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.key_id {
+    margin-left: 10px;
+}
+
+.key_value {
+    margin-left: 50px;
+}
