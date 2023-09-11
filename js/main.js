@@ -8,7 +8,7 @@ function checkElement(element) {
 }
 
 async function checkLogin() {
-    response =  await fetch("http://localhost:8080/is_login", {
+    response =  await fetch("http://localhost:8001/is_login", {
         "method": "POST",
         "mode": "cors",
         "headers": {
@@ -66,11 +66,11 @@ async function loginSend() {
     let check = await checkLogin()
     if (check) {
         alert("Вход уже был выполнен")
-        window.location.href = "http://localhost:8080/main"
+        window.location.href = "http://localhost:8001/main"
     }
     else {
 
-        let response = await fetch("http://localhost:8080/login", {
+        let response = await fetch("http://localhost:8001/login", {
             "method": "POST",
             "mode": "cors",
             "headers": {
@@ -81,8 +81,8 @@ async function loginSend() {
     
     
         if (response.status == 200) {
-            window.location.href = "http://localhost:8080/redir"
-            window.location.href = "http://localhost:8080/main"
+            window.location.href = "http://localhost:8001/redir"
+            window.location.href = "http://localhost:8001/main"
     
         }
     }
@@ -109,7 +109,7 @@ async function checkRadio(object) {
     }
 
     else if (parent_name == "right_form_div") {
-        let response = await fetch("http://localhost:8080/get_keys", {
+        let response = await fetch("http://localhost:8001/get_keys", {
             "method": "POST",
             "mode": "cors",
             "headers": {

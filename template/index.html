@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>VkHidden</title>
-</head>
-<body>
-    Fuck
-</body>
-</html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>VkHidden</title>
+        <link href="../css/normal.css" rel="stylesheet">
+        <link href="../css/index_style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="main">
+            <div class="container">
+               <div class="left_side">
+                <a href="#" class="menu_btn">Сообщения</a>
+                <a href="#" class="menu_btn">Друзья</a>
+               </div>
+               <div class="right_side_main">
+                    <div class="right_side_inner">
+                    {% for content in range(data|length) %}
+                        <div class="inner_left">
+                            <img src="{{data[content]["image"]}}" alt="" class="diaglog_img">
+                        </div>
+                        
+                        <div class="inner_right">
+                            <p class="name">{{data[content]["first_name"]}} {{data[content]["last_name"]}}</p>
+                            <p class="message">{{data[content]["text"]}}</p>
+                        </div>
+                    {% endfor %}
+                    </div>
+               </div>
+            </div>
+        </div>
+    </body>
+    </html>
