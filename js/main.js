@@ -7,6 +7,31 @@ function checkElement(element) {
     }
 }
 
+function goToEnd() {
+    let end = document.getElementById("end")
+    end.scrollIntoView()
+}
+
+async function getFullDialog(object) {
+    let parent = document.getElementById("all_content")
+
+    let response = await fetch("http://localhost:8001/get_full_dialog", {
+        "method": "POST",
+        "mode": "cors",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({"id": object.id})
+        })
+    if (response.ok) {
+        let html = await response.json();
+        parent.innerHTML = html["html"]
+        goToEnd()
+    }
+}
+
+
+
 async function checkLogin() {
     response =  await fetch("http://localhost:8001/is_login", {
         "method": "POST",

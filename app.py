@@ -3,11 +3,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from models import KeyResponse
+from models import KeyResponse, UserIdResponse
 from database import _get_keys
 from pathlib import Path
 from fastapi.responses import RedirectResponse, HTMLResponse
-from vkapi import get_jinja_render, get_dialogs_html
+from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog
 
 # access_token=vk1.a.ztLZi_h9NOfOgzD2sEV0g3HIrOPlxySP2q80L5rCibpf1sTNiZKoAYLV07XoVRnutW32BthxcVyZy8FolA9w6_6NSM4qUcOJdPICAdUICZxpwYX4xVJzhtDwhB29RDAaGtWgySrT1QPonFSktgjE86amIE38l_JKIABJx6GV1Dj_4dVR3vYsclHB1G1aBJ8S1ngOXLbOMtDu5z8p6CQT3g
 app = FastAPI()
@@ -59,6 +59,14 @@ async def get_html(keys):
     template = environment.from_string(pattern)
     html = {"html": template.render(keys=keys)}
 
+    return html
+
+
+@app.post("/get_full_dialog")
+async def get_full_dialog(user_id: UserIdResponse):
+    cur_id = user_id.model_dump()["id"]
+    print(cur_id)
+    html = {"html": await _get_full_dialog(cur_id)}
     return html
 
 

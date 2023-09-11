@@ -1,3 +1,6 @@
+import asyncio
+import pprint
+
 import jinja2
 from aiohttp import ClientSession
 from dataclasses import dataclass
@@ -61,7 +64,7 @@ async def _get_clear_dialogs(response):
                                      'to_id': point['peer_id'],
                                      'attach': point['attachments'][0]["type"] if point[
                                          "attachments"] else None,
-                                     'text': point['text'],
+                                     'text': point["text"],
                                      "image": more["image"],
                                      "first_name": more["first_name"],
                                      "last_name": more["last_name"]})
@@ -89,6 +92,8 @@ async def get_dialogs_html(
     <title>VkHidden</title>
     <link href="../css/normal.css" rel="stylesheet">
     <link href="../css/index_style.css" rel="stylesheet">
+    <script src="js/main.js"></script>
+
 </head>
 
 <body>
@@ -98,9 +103,9 @@ async def get_dialogs_html(
                 <a href="#" class="menu_btn">Сообщения</a>
                 <a href="#" class="menu_btn">Друзья</a>
             </div>
-                <div class="right_side_inner_content">
+                <div class="right_side_inner_content" id="all_content">
                 {% for content in range(data|length) %}
-                <div class="content">
+                <div id="{{ data[content]["to_id"]}}" class="content" onclick="getFullDialog(this)">
                     <div class="inner_left">
                         <img src="{{data[content]["image"]}}" alt="" class="diaglog_img">
                     </div>
@@ -122,4 +127,57 @@ async def get_dialogs_html(
     environment = get_jinja_render()
     template = environment.from_string(stm)
     html = template.render(data=dialogs["messages"])
+    return html
+
+
+async def get_full_dialog_html(data):
+    st = """
+    {% for content in data %}
+        <div class="content">
+            <div class="inner_left">
+                <img src="{{content["image"]}}" alt="" class="diaglog_img">
+            </div>
+        
+            <div class="inner_right">
+                <p class="name">{{content["name"]}}</p>
+                <p class="message">{{content["text"]}}</p>
+            </div>
+            
+        </div>
+
+{% endfor %}
+<div id="end"></div>
+    """
+    env = get_jinja_render()
+    template = env.from_string(st)
+    html = template.render(data=data)
+    return html
+
+
+async def _get_full_dialog(user_id):
+    data = dict()
+    param = VkUrlPost(section_api="messages", method="getHistory",
+                      query={"user_id": user_id, "extended": 1, "fields": "photo_50", "count": 25})
+    response = await post_to_vkapi(param)
+
+    my_profile_point = response["response"]["profiles"][0]
+    my_id = my_profile_point["id"]
+    my_image = my_profile_point["photo_50"]
+    my_name = my_profile_point["first_name"]
+    peer_profile_point = response["response"]["profiles"][1]
+    peer_image = peer_profile_point["photo_50"]
+    peer_name = peer_profile_point["first_name"]
+    data["data"] = []
+    for index, msg in enumerate(response["response"]["items"]):
+        if my_id == msg["from_id"]:
+            image = my_image
+            name = my_name
+        else:
+            image = peer_image
+            name = peer_name
+        text = msg["text"]
+        d = {"image": image, "name": name, "text": text}
+        data["data"].append(d)
+    data["data"] = reversed(data["data"])
+    html = await get_full_dialog_html(data["data"])
     return html
