@@ -1,39 +1,10 @@
 # -*- coding: utf-8 -*-
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi import Request
+from vkapi import app, TOKEN
 from models import KeyResponse, UserIdResponse
 from database import _get_keys
-from pathlib import Path
 from fastapi.responses import RedirectResponse, HTMLResponse
-from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog
-
-# access_token=vk1.a.ztLZi_h9NOfOgzD2sEV0g3HIrOPlxySP2q80L5rCibpf1sTNiZKoAYLV07XoVRnutW32BthxcVyZy8FolA9w6_6NSM4qUcOJdPICAdUICZxpwYX4xVJzhtDwhB29RDAaGtWgySrT1QPonFSktgjE86amIE38l_JKIABJx6GV1Dj_4dVR3vYsclHB1G1aBJ8S1ngOXLbOMtDu5z8p6CQT3g
-app = FastAPI()
-
-TOKEN = ""
-
-app.mount(
-    "/css",
-    StaticFiles(directory=Path("css").absolute()),
-    name="css",
-)
-
-app.mount(
-    "/js",
-    StaticFiles(directory=Path("js").absolute()),
-    name="js",
-)
-templates = Jinja2Templates(directory="template")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
+from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates
 
 
 @app.get("/")
@@ -92,13 +63,13 @@ async def check_login():
 
 
 @app.get("/main")
-async def main():
+async def main(request: Request):
     if TOKEN:
-        return HTMLResponse(content=await get_dialogs_html(), status_code=200)
+        a = await get_dialogs_html()
+        return templates.TemplateResponse("all_dialogs.html", {"request": request, "data": a})
 
-# музыка - audio
-# видео - video
-# запись - wall
-# документ- doc
-# голосовое - audio_message
-# ссылка - link
+
+@app.get("/main/{dialog_id}")
+async def get_dialog_by_id(request: Request, dialog_id):
+    a = await _get_full_dialog(dialog_id)
+    return templates.TemplateResponse("dialog_html.html", {"request": request, "data": a})

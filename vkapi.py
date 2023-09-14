@@ -2,12 +2,42 @@ import asyncio
 import pprint
 
 import jinja2
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI
 from aiohttp import ClientSession
 from dataclasses import dataclass
+from pathlib import Path
 
 HEAD_LOGIN = {
     "Authorization": "Bearer vk1.a.Bxln2YFBIkqt7INbF3zOtsTcwko7xKqdsevKY01kvRQ2od_ZeUO3vTgBFzN6PDFppC3HuLC0BpcNA1TVcEMNghLzoMFcMr_82dBwLPFYc_V6sdgRBba-s0hY2E8EjQAPGAofJkNv4ufnbJuEyB_B09KpGKZEohAOP58bvFx5hR1LxjvUP9UhID1wFTaAMU9u4tzt3J8FluapQq7AxGdsbw"
 }
+
+app = FastAPI()
+
+TOKEN = ""
+
+app.mount(
+    "/css",
+    StaticFiles(directory=Path("css").absolute()),
+    name="css",
+)
+
+app.mount(
+    "/js",
+    StaticFiles(directory=Path("js").absolute()),
+    name="js",
+)
+templates = Jinja2Templates(directory="template")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 @dataclass
@@ -84,74 +114,19 @@ async def get_dialogs_html(
         param: VkUrlPost = VkUrlPost(section_api="messages", method="getConversations", query={"count": 50})):
     response = await(post_to_vkapi(param))
     dialogs = await _get_clear_dialogs(response)
-    stm = """<!DOCTYPE html>
-<html lang="ru">
 
-<head>
-    <meta charset="UTF-8">
-    <title>VkHidden</title>
-    <link href="../css/normal.css" rel="stylesheet">
-    <link href="../css/index_style.css" rel="stylesheet">
-    <script src="js/main.js"></script>
-
-</head>
-
-<body>
-    <div class="main">
-        <div class="container">
-            <div class="left_side">
-                <a href="#" class="menu_btn">Сообщения</a>
-                <a href="#" class="menu_btn">Друзья</a>
-            </div>
-                <div class="right_side_inner_content" id="all_content">
-                {% for content in range(data|length) %}
-                <div id="{{ data[content]["to_id"]}}" class="content" onclick="getFullDialog(this)">
-                    <div class="inner_left">
-                        <img src="{{data[content]["image"]}}" alt="" class="diaglog_img">
-                    </div>
-
-                    <div class="inner_right">
-                        <p class="name">{{data[content]["first_name"]}} {{data[content]["last_name"]}}</p>
-                        <p class="message">{{data[content]["text"]}}</p>
-                    </div>
-                    
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</body>
-
-</html>"""
-
-    environment = get_jinja_render()
-    template = environment.from_string(stm)
-    html = template.render(data=dialogs["messages"])
-    return html
+    return dialogs["messages"]
 
 
-async def get_full_dialog_html(data):
-    st = """
-    {% for content in data %}
-        <div class="content">
-            <div class="inner_left">
-                <img src="{{content["image"]}}" alt="" class="diaglog_img">
-            </div>
-        
-            <div class="inner_right">
-                <p class="name">{{content["name"]}}</p>
-                <p class="message">{{content["text"]}}</p>
-            </div>
-            
-        </div>
-
-{% endfor %}
-<div id="end"></div>
-    """
-    env = get_jinja_render()
-    template = env.from_string(st)
-    html = template.render(data=data)
-    return html
+async def get_profile(profile_id: int = None):
+    if profile_id is None:
+        response = await post_to_vkapi(
+            VkUrlPost(section_api="users", method="get", query={"fields": "photo_50"}))
+    else:
+        response = await post_to_vkapi(
+            VkUrlPost(section_api="users", method="get", query={"user_ids": profile_id, "fields": "photo_50"}))
+    response = response["response"][0]
+    return {"id": response["id"], "image": response["photo_50"], "name": response["first_name"]}
 
 
 async def _get_full_dialog(user_id):
@@ -160,24 +135,19 @@ async def _get_full_dialog(user_id):
                       query={"user_id": user_id, "extended": 1, "fields": "photo_50", "count": 25})
     response = await post_to_vkapi(param)
 
-    my_profile_point = response["response"]["profiles"][0]
-    my_id = my_profile_point["id"]
-    my_image = my_profile_point["photo_50"]
-    my_name = my_profile_point["first_name"]
-    peer_profile_point = response["response"]["profiles"][1]
-    peer_image = peer_profile_point["photo_50"]
-    peer_name = peer_profile_point["first_name"]
+    my_profile = await get_profile()
+    peer_profile = await get_profile(user_id)
     data["data"] = []
     for index, msg in enumerate(response["response"]["items"]):
-        if my_id == msg["from_id"]:
-            image = my_image
-            name = my_name
-        else:
-            image = peer_image
-            name = peer_name
+        if my_profile["id"] == msg["from_id"]:
+            image = my_profile["image"]
+            name = my_profile["name"]
+        if peer_profile["id"] == msg["from_id"]:
+            image = peer_profile["image"]
+            name = peer_profile["name"]
         text = msg["text"]
         d = {"image": image, "name": name, "text": text}
         data["data"].append(d)
-    data["data"] = reversed(data["data"])
-    html = await get_full_dialog_html(data["data"])
-    return html
+    data["data"] = list(reversed(data["data"]))
+
+    return data["data"]

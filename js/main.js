@@ -7,22 +7,22 @@ function checkElement(element) {
     }
 }
 
-function goToEnd() {
-    let end = document.getElementById("end")
-    end.scrollIntoView()
+async function getFullDialogSend(object) {
+    window.location.href = `http://localhost:8080/main/${object.id}`
+
 }
 
 async function getFullDialog(object) {
     let parent = document.getElementById("all_content")
 
-    let response = await fetch("http://localhost:8001/get_full_dialog", {
+    let response = await fetch("http://localhost:8080/get_full_dialog", {
         "method": "POST",
         "mode": "cors",
         "headers": {
             "Content-Type": "application/json"
         },
-        "body": JSON.stringify({"id": object.id})
-        })
+        "body": JSON.stringify({ "id": object.id })
+    })
     if (response.ok) {
         let html = await response.json();
         parent.innerHTML = html["html"]
@@ -33,7 +33,7 @@ async function getFullDialog(object) {
 
 
 async function checkLogin() {
-    response =  await fetch("http://localhost:8001/is_login", {
+    response = await fetch("http://localhost:8080/is_login", {
         "method": "POST",
         "mode": "cors",
         "headers": {
@@ -64,7 +64,7 @@ function keyChange(object) {
 
     if (object.value) {
         if (!btn_log) {
-            elem.addEventListener("click", event => {loginSend(event)})
+            elem.addEventListener("click", event => { loginSend(event) })
             parent.append(elem)
         }
     }
@@ -91,31 +91,31 @@ async function loginSend() {
     let check = await checkLogin()
     if (check) {
         alert("Вход уже был выполнен")
-        window.location.href = "http://localhost:8001/main"
+        window.location.href = "http://localhost:8080/main"
     }
     else {
 
-        let response = await fetch("http://localhost:8001/login", {
+        let response = await fetch("http://localhost:8080/login", {
             "method": "POST",
             "mode": "cors",
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": JSON.stringify({"key": key})
+            "body": JSON.stringify({ "key": key })
         })
-    
-    
+
+
         if (response.status == 200) {
-            window.location.href = "http://localhost:8001/redir"
-            window.location.href = "http://localhost:8001/main"
-    
+            window.location.href = "http://localhost:8080/redir"
+            window.location.href = "http://localhost:8080/main"
+
         }
     }
 }
-    
+
 
 async function checkRadio(object) {
-    
+
     let exist_element = document.getElementById("key_obj")
     if (checkElement(exist_element)) {
         let p = exist_element.parentElement.parentElement
@@ -134,7 +134,7 @@ async function checkRadio(object) {
     }
 
     else if (parent_name == "right_form_div") {
-        let response = await fetch("http://localhost:8001/get_keys", {
+        let response = await fetch("http://localhost:8080/get_keys", {
             "method": "POST",
             "mode": "cors",
             "headers": {
@@ -149,4 +149,14 @@ async function checkRadio(object) {
 
     main_div.append(elem)
 
+}
+
+async function selectMessage(object) {
+    console.log(object)
+}
+
+async function sendMessage(object) {
+    if (event.key ==="Enter") {
+        console.log(object)
+    }
 }
