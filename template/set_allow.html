@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройка доступа</title>
+    <link href="{{ url_for('css', path='/normal.css') }}" rel="stylesheet">
+    <link href="{{ url_for('css', path='/set_up_style.css') }}" rel="stylesheet">
+    <script src="{{ url_for('js', path='/main.js') }}"></script>
+
+</head>
+
+<body>
+
+    <div class="table">
+        <div class="row">
+            <div class="cell">Хост</div>
+            <div class="cell">Псевдоним</div>
+            <div class="cell">Доступ</div>
+        </div>
+        {% for guest in guests %}
+
+        <div class="row">
+            <div class="cell">{{ guest.guest_host }}</div>
+            <div class="cell">{{ guest.guest_alias }}</div>
+            {% if guest.allow %}
+
+            <select id="allow_id_{{guest.guest_alias }}" name="allow"1>
+                <option selected value="true">Разрешен</option>
+                <option value="false">Запрещен</option>
+            </select>
+            {% else %}
+            <select id="allow_id{{guest.guest_alias}}" name="allow1">
+                <option value="apple">Разрешен</option>
+                <option selected value="false">Запрещен</option>
+            </select>
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+    </div>
+
+
+</body>
+
+</html>

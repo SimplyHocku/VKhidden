@@ -43,12 +43,18 @@
                     </svg>
                     <a href="#" class="menu_btn">Друзья</a>
                 </div>
+                <div class="left_side_inner">
+                    <a href="#" class="create_key" onclick="createKey(this)">Создать ключ шифрования</a>
+                </div>
+                <div class="left_side_inner">
+                    <a href="#" class="exit_vk" onclick="exitVK(this)">Выйти</a>
+                </div>
             </div>
             <div class="right_side_inner_content" id="all_content">
                 {% for content in range(data|length) %}
-                <div id="{{ data[content][" to_id"]}}" class="content" onclick="getFullDialogSend(this)">
+                <div id="{{ data[content]["to_id"]}}" class="content" onclick="getFullDialogSend(this)">
                     <div class="inner_left">
-                        <img src="{{data[content][" image"]}}" alt="" class="diaglog_img">
+                        <img src="{{data[content]['image']}}" alt="" class="diaglog_img">
                     </div>
 
                     <div class="inner_right">

@@ -1,6 +1,3 @@
-import asyncio
-import pprint
-
 import jinja2
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -146,8 +143,16 @@ async def _get_full_dialog(user_id):
             image = peer_profile["image"]
             name = peer_profile["name"]
         text = msg["text"]
-        d = {"image": image, "name": name, "text": text}
+        message_id = msg["conversation_message_id"]
+        d = {"image": image, "name": name, "text": text, "message_id": message_id}
         data["data"].append(d)
     data["data"] = list(reversed(data["data"]))
 
     return data["data"]
+
+
+async def _send_message(message_lex):
+    await post_to_vkapi(VkUrlPost(section_api="messages", method="send",
+                                  query={"user_id": message_lex["user_id"], "random_id": 0,
+                                         "message": message_lex["msg_text"]}))
+

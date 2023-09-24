@@ -8,6 +8,7 @@ function checkElement(element) {
 }
 
 async function getFullDialogSend(object) {
+
     window.location.href = `http://localhost:8080/main/${object.id}`
 
 }
@@ -42,11 +43,11 @@ async function checkLogin() {
     })
     if (response.ok) {
         let code = await response.json()
-        if (code == "400") {
+        if (code == 400) {
             return false
         }
 
-        else if (code == "200") {
+        else if (code == 200) {
             return true
         }
     }
@@ -84,7 +85,6 @@ async function loginSend() {
     else if (target.id == "login_btn") {
         key = document.getElementById("key_obj").value
     }
-
     else {
         return
     }
@@ -94,20 +94,51 @@ async function loginSend() {
         window.location.href = "http://localhost:8080/main"
     }
     else {
-
+        let remember_checkbox = document.getElementById("remember_checkbox").checked
         let response = await fetch("http://localhost:8080/login", {
             "method": "POST",
             "mode": "cors",
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": JSON.stringify({ "key": key })
+            "body": JSON.stringify({ "key": key, "remember": remember_checkbox })
         })
 
 
-        if (response.status == 200) {
-            window.location.href = "http://localhost:8080/redir"
-            window.location.href = "http://localhost:8080/main"
+        if (response.ok == 200) {
+            let code = await response.json()
+            if (code == 200){
+                window.location.href = "http://localhost:8080/main"
+            }
+
+        }
+    }
+}
+
+
+async function loginRememberSend(object) {
+    let check = await checkLogin()
+    if (check) {
+        alert("Вход уже был выполнен")
+        window.location.href = "http://localhost:8080/main"
+    }
+    else {
+        let key = object.innerText
+        let response = await fetch("http://localhost:8080/login", {
+            "method": "POST",
+            "mode": "cors",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({ "key": key})
+        })
+
+
+        if (response.ok ) {
+            let code = await response.json()
+            if (code == 200){
+                window.location.href = "http://localhost:8080/main"
+            }
 
         }
     }
@@ -130,7 +161,7 @@ async function checkRadio(object) {
 
 
     if (parent_name == "left_form_div") {
-        elem.innerHTML = '<input type="text" placeholder="VkKey" id="key_obj" oninput="keyChange(this)">'
+        elem.innerHTML = '<input type="text" placeholder="VkKey" id="key_obj" oninput="keyChange(this)"><input type="checkbox" id="remember_checkbox"><label for="remember_checkbox">Запомнить</label>'
     }
 
     else if (parent_name == "right_form_div") {
@@ -151,12 +182,121 @@ async function checkRadio(object) {
 
 }
 
+
+
+
 async function selectMessage(object) {
-    console.log(object)
+    let decrypt_btn = document.getElementById("decrypt_btn")
+    window.message_id_box = object.id
+    if (event.target.className == "content") {
+        if (window.key_exists == 200) {
+            decrypt_btn.disabled = false
+        }
+    }
+
+    else {
+        decrypt_btn.disabled = true
+    }
+
+
+}
+
+function checkIsMessage(object) {
+    let decrypt_btn = document.getElementById("decrypt_btn")
+    if (event.target.className != "content") {
+        decrypt_btn.disabled = true
+    }
 }
 
 async function sendMessage(object) {
-    if (event.key ==="Enter") {
-        console.log(object)
+    let crypto_box = document.getElementById("crypt_checkbox").checked
+    let msg_text_field = document.getElementById("msg_text_filed")
+
+
+    if (event.key === "Enter" || event.target.id == "send_msg_btn") {
+        let msg_text = msg_text_field.value
+        let user_id = window.location.href.split("/")
+        let response = await fetch("http://localhost:8080/send_message", {
+            "method": "POST",
+            "mode": "cors",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({ "msg_text": msg_text, "crypt": crypto_box, "user_id": Number(user_id[user_id.length - 1]) })
+
+        })
+
+        if (response.ok) {
+            let key_exists = await response.json()
+            if (key_exists["status_code"] == 200) {
+                window.location.reload()
+            }
+
+        }
+
+    }
+}
+
+async function createKey(object) {
+    key_title = prompt("Название для ключа?")
+
+    let response = await fetch("http://localhost:8080/create_key", {
+        "method": "POST",
+        "mode": "cors",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({ "key_name": key_title })
+    })
+
+    if (response.status == 200) {
+
+    }
+}
+
+async function decryptMessage() {
+    let msg_text = document.getElementById(window.message_id_box).children[1].children[1].innerText
+
+    let response = await fetch("http://localhost:8080/decrypt_message", {
+        "method": "POST",
+        "mode": "cors",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({ "msg": msg_text })
+
+    })
+
+    if (response.ok) {
+        let decrypted_msg = await response.json()
+        msg_text = decrypted_msg["decrypted_msg"]
+        if (msg_text == 400) {
+            return
+        }
+        document.getElementById(window.message_id_box).children[1].children[1].innerText = msg_text
+
+    }
+
+}
+
+
+async function exitVK(object) {
+    let response = await fetch("http://localhost:8080/exit_vk", {
+        "method": "POST",
+        "mode": "cors",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    })
+
+    if (response.ok) {
+        let decrypted_msg = await response.json()
+        msg_text = decrypted_msg["decrypted_msg"]
+        if (msg_text == 400) {
+            return
+        }
+        else {
+            window.location.href = "http://localhost:8080/"
+        }
     }
 }

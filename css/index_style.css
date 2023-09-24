@@ -27,8 +27,7 @@ body {
     position: fixed;
     top: 30px;
     flex-direction: column;
-    margin-right: 50px;
-    margin-left: 250px;
+    margin-left: 100px;
 
 }
 
@@ -47,6 +46,7 @@ body {
 }
 
 .container {
+    margin: 0 auto;
     display: flex;
     margin-top: 30px;
     flex-direction: row;
@@ -70,6 +70,11 @@ body {
     overflow-y: auto;
     border-radius: 10px;
     background-color: rgba(130, 84, 247, 0.1);
+}
+
+.message {
+    width: 350px;
+    overflow: auto;
 }
 
 .content {
@@ -113,9 +118,14 @@ body {
 .send_msg_text {
     width: 600px;
     height: 40px;
-    bottom: 30px;
-    position: fixed;
+    /* bottom: auto; */
+    /* position: fixed; */
     margin-left: 400px;
     border-radius: 10px;
     background-color: whitesmoke;
+}
+
+.send_msg_block {
+    position: fixed;
+    bottom: 100px;
 }
