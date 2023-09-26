@@ -9,7 +9,7 @@
         window.onload = async function() {
             let userAlias = prompt("Какой у вас будет логин?")
             let host = window.location.href.split("/")[2]
-            let response = await fetch(`http://${host}/allowed`, {
+            let response = await fetch(`http://${host}:8080/allowed`, {
             "method": "POST",
             "mode": "cors",
             "headers": {
