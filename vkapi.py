@@ -1,3 +1,5 @@
+import os
+
 import jinja2
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -7,13 +9,8 @@ from aiohttp import ClientSession
 from dataclasses import dataclass
 from pathlib import Path
 
-HEAD_LOGIN = {
-    "Authorization": "Bearer vk1.a.Bxln2YFBIkqt7INbF3zOtsTcwko7xKqdsevKY01kvRQ2od_ZeUO3vTgBFzN6PDFppC3HuLC0BpcNA1TVcEMNghLzoMFcMr_82dBwLPFYc_V6sdgRBba-s0hY2E8EjQAPGAofJkNv4ufnbJuEyB_B09KpGKZEohAOP58bvFx5hR1LxjvUP9UhID1wFTaAMU9u4tzt3J8FluapQq7AxGdsbw"
-}
 
 app = FastAPI()
-
-TOKEN = ""
 
 app.mount(
     "/css",
@@ -40,7 +37,7 @@ app.add_middleware(
 @dataclass
 class VkUrlPost:
     section_api: str
-    method: str  #
+    method: str
     query: dict = None
     version: str = "v=5.131"
     http_version: str = "HTTP/1.1"
@@ -101,8 +98,11 @@ async def _get_clear_dialogs(response):
 
 async def post_to_vkapi(param: VkUrlPost):
     async with ClientSession() as session:
+        head_login = {
+            "Authorization": f"Bearer {os.getenv('TOKEN')}"
+        }
         async with session.post(param.query_string,
-                                headers=HEAD_LOGIN) as resp:
+                                headers=head_login) as resp:
             response = await resp.json(encoding="utf-8")
             return response
 
@@ -155,4 +155,3 @@ async def _send_message(message_lex):
     await post_to_vkapi(VkUrlPost(section_api="messages", method="send",
                                   query={"user_id": message_lex["user_id"], "random_id": 0,
                                          "message": message_lex["msg_text"]}))
-

@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import asyncio
+import os
 
 import aiofiles
-import fastapi.responses
-from cryptography.fernet import Fernet
 from pathlib import Path
 from fastapi import Request, Response
-from vkapi import app, TOKEN
+from vkapi import app
 from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Message, GuestModel, GuestDataModel
 from database import _get_keys, _save_vk_token, _add_host_guest, _get_host_guest_allow, _get_guest_exist, \
     _get_all_guests_with_perm, _set_guest_permission
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.responses import RedirectResponse
 from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
 
@@ -20,8 +18,7 @@ from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_me
 
 @app.get("/")
 async def home(request: Request):
-    global TOKEN
-    if TOKEN:
+    if os.getenv("TOKEN"):
         return RedirectResponse("/main")
     return templates.TemplateResponse("login.html", {"request": request})
 
@@ -59,9 +56,8 @@ async def get_keys():
 
 @app.post("/login")
 async def login(params: KeyResponse):
-    global TOKEN
     params = params.model_dump()
-    TOKEN = params["key"]
+    os.environ["TOKEN"] = params["key"]
     if params["remember"]:
         await _save_vk_token(params["key"])
     return 200
@@ -70,7 +66,7 @@ async def login(params: KeyResponse):
 @app.post("/is_login")
 async def check_login(response: Response):
     code = 200
-    if not TOKEN:
+    if os.getenv("TOKEN") is not None:
         code = 400
 
     return {"status_code": code}
@@ -84,7 +80,7 @@ async def check_key_exists():
 
 @app.get("/main")
 async def main(request: Request):
-    if TOKEN:
+    if os.getenv("TOKEN"):
         a = await get_dialogs_html()
         return templates.TemplateResponse("all_dialogs.html", {"request": request, "data": a})
     else:
@@ -123,8 +119,7 @@ async def decrypt_message(msg: MsgForEncrypt):
 
 @app.post('/exit_vk')
 async def exit_vk():
-    global TOKEN
-    TOKEN = ""
+    os.environ.pop("TOKEN")
     return 200
 
 
@@ -137,7 +132,6 @@ async def get_secret_message(request: Request):
 async def allowed(guest: GuestModel, request: Request):
     is_guest = guest.model_dump()
     exist_guest = await _get_guest_exist(request.client.host, is_guest["guest_alias"])
-    # print(type(request.client.host))
 
     if exist_guest is None:
         await _add_host_guest(request.client.host, is_guest["guest_alias"])
@@ -153,7 +147,6 @@ async def get_secret_key():
         if file.is_file():
             async with aiofiles.open(file, "rb") as f:
                 key = await f.read()
-                print(key)
                 return {"key": key}
 
 
@@ -168,3 +161,23 @@ async def set_up_access(request: Request):
 async def permission_changed(guest_data: GuestDataModel):
     guest_data = guest_data.model_dump()
     await _set_guest_permission(guest_data["host"], guest_data["alias"], guest_data["allow"])
+
+
+@app.post("/get_port")
+async def get_port():
+    return {"port": os.environ["CPORT"]}
+
+
+def set_port():
+    if os.environ.get("CPORT") is None:
+        return
+    file_js = "js/main.js"
+    with open(file_js, "r") as file:
+        all_code = file.readlines()
+    with open(file_js, "w") as file:
+        all_code[0] = f"const PORT = {os.environ['CPORT']}\n"
+        st = "".join(all_code)
+        file.write(st)
+
+
+set_port()

@@ -12,27 +12,8 @@
 
     <script>
 
-        window.onload = async function () {
-            let end = document.getElementById("end")
-            end.scrollIntoView()
-
-            let response = await fetch("http://localhost:8080/key_exists", {
-                "method": "POST",
-                "mode": "cors",
-                "headers": {
-                    "Content-Type": "application/json"
-                }
-            },)
-
-            if (response.ok) {
-                let key_exists = await response.text()
-                window.key_exists = Number(key_exists)
-                if (Number(key_exists) == 400) {
-                    alert("Для расшифровки сообщении необходимо создать ключ шифрования")
-                }
-
-            }
-        }
+        window.addEventListener("load", scroolToEnd)
+        window.addEventListener("load", loadForDialogTemplate)
 
     </script>
 

@@ -10,7 +10,10 @@ from pathlib import PurePath, Path
 
 async def _check_key_exists():
     path = Path("keys")
-    return True if listdir(path) else False
+    for file in path.iterdir():
+        if file.is_file():
+            return True
+    return False
 
 
 async def create_key(name):
@@ -20,7 +23,7 @@ async def create_key(name):
 
     key = Fernet.generate_key()
     if direct:
-        [unlink(f) for f in path.iterdir()]
+        [unlink(f) for f in path.iterdir() if f.is_file()]
     save_file = Path(path, name)
     with open(save_file, "wb") as r_key:
         r_key.write(key)
