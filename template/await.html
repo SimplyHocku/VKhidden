@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизация на получение ключа-шифрования</title>
     <script src="{{ url_for('js', path='/main.js') }}"></script>
     <script>
-        window.onload = async function() {
+        window.onload = async function () {
             let userAlias = prompt("Какой у вас будет логин?")
-            
+
             let host = window.location.href.split("/")[2]
             let response = await fetch(`https://${host}/allowed`, {
-            "method": "POST",
-            "mode": "cors",
-            "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": JSON.stringify({"guest_alias": userAlias})
-    })
-    
-    if (response.ok) {
-        let guest = await response.json();
-        let redirect = window.location.href + `get_secret_key/${guest["client_host"]}/${gust["alias"]}`
-        if (guest["allow"]) {
+                "method": "POST",
+                "mode": "cors",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({ "guest_alias": userAlias })
+            })
 
-            console.log("T")
-            window.location.href = `https://${host}:8080/get_secret_key/${guest["client_host"]}/${guest["alias"]}`
-        }
-        // ht = document.body.innerHTML = html["html"]
-        // parent.innerHTML = html["html"]
-        // goToEnd()
-    }
-        
+            if (response.ok) {
+                let guest = await response.json();
+                let redirect = window.location.href + `get_secret_key/${guest["client_host"]}/${guest["alias"]}`
+                if (guest["allow"]) {
+
+                    let key_reponse = await fetch(`https://${host}/get_secret_key`, {
+                        "method": "POST",
+                        "mode": "cors",
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+
+                    })
+
+                    if (key_reponse.ok) {
+                        let key = await key_reponse.json()
+                        document.body.innerHTML = `<h1>${key["key"]}</h1>`
+                    }
+                }
+            }
+
         }
     </script>
 </head>
+
 <body>
-    
+
 </body>
+
 </html>

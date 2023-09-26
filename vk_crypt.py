@@ -51,3 +51,6 @@ async def _decrypt_message(msg):
         except cryptography.fernet.InvalidToken:
             return 400
         return decrypted_msg
+
+
+# asyncio.run(c)

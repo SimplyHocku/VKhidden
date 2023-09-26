@@ -4,6 +4,7 @@ import asyncio
 import aiofiles
 import fastapi.responses
 from cryptography.fernet import Fernet
+from pathlib import Path
 from fastapi import Request, Response
 from vkapi import app, TOKEN
 from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Message, GuestModel, GuestDataModel
@@ -145,13 +146,15 @@ async def allowed(guest: GuestModel, request: Request):
         "allow": False}
 
 
-@app.get("/get_secret_key/{host}/{alias}")
-async def get_secret_key(host: str, alias: str):
-    allow = await _get_host_guest_allow(host, alias)
-    if allow:
-        return fastapi.responses.FileResponse("Pab.key")
-    else:
-        return "Fuck you"
+@app.post("/get_secret_key/")
+async def get_secret_key():
+    key_dir = Path("keys")
+    for file in key_dir.iterdir():
+        if file.is_file():
+            async with aiofiles.open(file, "rb") as f:
+                key = await f.read()
+                print(key)
+                return {"key": key}
 
 
 @app.get("/set_up_access")
