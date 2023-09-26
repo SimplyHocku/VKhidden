@@ -10,7 +10,7 @@
             let userAlias = prompt("Какой у вас будет логин?")
             
             let host = window.location.href.split("/")[2]
-            let response = await fetch(`https://${host}:8080/allowed`, {
+            let response = await fetch(`https://${host}/allowed`, {
             "method": "POST",
             "mode": "cors",
             "headers": {
