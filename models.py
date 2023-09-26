@@ -23,8 +23,10 @@ class Message(BaseModel):
     crypt: bool
     user_id: int
 
+
 class GuestModel(BaseModel):
     guest_alias: str
+
 
 class GuestDataModel(BaseModel):
     host: str

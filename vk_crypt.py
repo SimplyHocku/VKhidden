@@ -1,11 +1,9 @@
-import random
-import asyncio
-import aiofiles
-from os import unlink, listdir
 
+import aiofiles
 import cryptography.fernet
+from os import unlink, listdir
 from cryptography.fernet import Fernet
-from pathlib import PurePath, Path
+from pathlib import Path
 
 
 async def _check_key_exists():
