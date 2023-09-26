@@ -8,8 +8,9 @@
     <script>
         window.onload = async function() {
             let userAlias = prompt("Какой у вас будет логин?")
+            
             let host = window.location.href.split("/")[2]
-            let response = await fetch(`http://${host}:8080/allowed`, {
+            let response = await fetch(`https://${host}:8080/allowed`, {
             "method": "POST",
             "mode": "cors",
             "headers": {
@@ -20,6 +21,7 @@
     
     if (response.ok) {
         let guest = await response.json();
+        let redirect = window.location.href + `get_secret_key/${guest["client_host"]}/${gust["alias"]}`
         if (guest["allow"]) {
 
             console.log("T")
