@@ -3,7 +3,6 @@ import asyncio
 
 import aiofiles
 import fastapi.responses
-import rsa
 from cryptography.fernet import Fernet
 from fastapi import Request, Response
 from vkapi import app, TOKEN

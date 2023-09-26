@@ -8,7 +8,8 @@
     <script>
         window.onload = async function() {
             let userAlias = prompt("Какой у вас будет логин?")
-            let response = await fetch("http://localhost:8080/allowed", {
+            let host = window.location.href.split("/")[2]
+            let response = await fetch(`http://${host}/allowed`, {
             "method": "POST",
             "mode": "cors",
             "headers": {
@@ -22,7 +23,7 @@
         if (guest["allow"]) {
 
             console.log("T")
-            window.location.href = `http://localhost:8080/get_secret_key/${guest["client_host"]}/${guest["alias"]}`
+            window.location.href = `http://${host}:8080/get_secret_key/${guest["client_host"]}/${guest["alias"]}`
         }
         // ht = document.body.innerHTML = html["html"]
         // parent.innerHTML = html["html"]
