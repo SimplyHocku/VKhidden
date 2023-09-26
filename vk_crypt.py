@@ -9,7 +9,7 @@ from pathlib import Path
 async def _check_key_exists():
     path = Path("keys")
     for file in path.iterdir():
-        if file.is_file():
+        if file.is_file() and file.suffix == ".key":
             return True
     return False
 
@@ -21,7 +21,7 @@ async def create_key(name):
 
     key = Fernet.generate_key()
     if direct:
-        [unlink(f) for f in path.iterdir() if f.is_file()]
+        [unlink(f) for f in path.iterdir() if f.is_file() and f.suffix == ".key"]
     save_file = Path(path, name)
     with open(save_file, "wb") as r_key:
         r_key.write(key)
