@@ -25,3 +25,8 @@ class Message(BaseModel):
 
 class GuestModel(BaseModel):
     guest_alias: str
+
+class GuestDataModel(BaseModel):
+    host: str
+    alias: str
+    allow: bool

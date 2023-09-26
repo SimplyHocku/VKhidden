@@ -65,11 +65,8 @@ async def _add_host_guest(host, alias):
 async def _get_host_guest_allow(host, alias):
     async with async_session() as session:
         async with session.begin():
-            guest = await session.execute(
-                select(Guest).where(Guest.guest_host == host, Guest.guest_alias == alias))
             allowed = await session.execute(
                 select(Guest.is_allowed).where(Guest.guest_host == host, Guest.guest_alias == alias))
-            print(guest.scalar())
             return allowed.scalar()
 
 

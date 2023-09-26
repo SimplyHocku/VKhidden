@@ -7,9 +7,9 @@ import rsa
 from cryptography.fernet import Fernet
 from fastapi import Request, Response
 from vkapi import app, TOKEN
-from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Message, GuestModel
+from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Message, GuestModel, GuestDataModel
 from database import _get_keys, _save_vk_token, _add_host_guest, _get_host_guest_allow, _get_guest_exist, \
-    _get_all_guests_with_perm
+    _get_all_guests_with_perm, _set_guest_permission
 from fastapi.responses import RedirectResponse, HTMLResponse
 from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
@@ -158,5 +158,11 @@ async def get_secret_key(host: str, alias: str):
 @app.get("/set_up_access")
 async def set_up_access(request: Request):
     guests = await _get_all_guests_with_perm()
-    print(guests)
+
     return templates.TemplateResponse("set_allow.html", {"request": request, "guests": guests})
+
+
+@app.post("/permission_changed")
+async def permission_changed(guest_data: GuestDataModel):
+    guest_data = guest_data.model_dump()
+    await _set_guest_permission(guest_data["host"], guest_data["alias"], guest_data["allow"])

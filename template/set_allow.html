@@ -12,37 +12,40 @@
 </head>
 
 <body>
-
-    <div class="table">
-        <div class="row">
-            <div class="cell">Хост</div>
-            <div class="cell">Псевдоним</div>
-            <div class="cell">Доступ</div>
+    <div class="main">
+        <div class="content">
+            <h1 class="main_title">
+                Настройка доступа
+            </h1>
+            <div class="table">
+                <div class="row">
+                    <div class="cell">Хост</div>
+                    <div class="cell">Псевдоним</div>
+                    <div class="cell">Доступ</div>
+                </div>
+                {% for guest in guests %}
+    
+                <div class="row">
+                    <div class="cell" id="guest_host">{{ guest.guest_host }}</div>
+                    <div class="cell" id="guest_alias">{{ guest.guest_alias }}</div>
+                    {% if guest.is_allowed %}
+    
+                    <select id="allow_id_{{guest.guest_alias }}" onchange="sendChangePerm(this)">
+                        <option selected value="1">Разрешен</option>
+                        <option value="">Запрещен</option>
+                    </select>
+                    {% else %}
+                    <select id="allow_id_{{guest.guest_alias}}" onchange="sendChangePerm(this)">
+                        <option value="1">Разрешен</option>
+                        <option selected value="">Запрещен</option>
+                    </select>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        {% for guest in guests %}
-
-        <div class="row">
-            <div class="cell">{{ guest.guest_host }}</div>
-            <div class="cell">{{ guest.guest_alias }}</div>
-            {% if guest.allow %}
-
-            <select id="allow_id_{{guest.guest_alias }}" name="allow"1>
-                <option selected value="true">Разрешен</option>
-                <option value="false">Запрещен</option>
-            </select>
-            {% else %}
-            <select id="allow_id{{guest.guest_alias}}" name="allow1">
-                <option value="apple">Разрешен</option>
-                <option selected value="false">Запрещен</option>
-            </select>
-            {% endif %}
-
-        </div>
-
-        {% endfor %}
+        
     </div>
-
-
 </body>
 
 </html>

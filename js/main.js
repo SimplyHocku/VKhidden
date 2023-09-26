@@ -300,3 +300,31 @@ async function exitVK(object) {
         }
     }
 }
+
+
+async function sendChangePerm(object) {
+    let elements_child = object.parentElement.children
+    let host = elements_child[0].innerText
+    let alias = elements_child[1].innerText
+    let allow = Boolean(elements_child[2].value)
+
+    let response = await fetch("http://localhost:8080/permission_changed", {
+        "method": "POST",
+        "mode": "cors",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({ "host": host, "alias": alias, "allow": allow })
+    })
+
+    // // if (response.ok) {
+    // //     let decrypted_msg = await response.json()
+    // //     msg_text = decrypted_msg["decrypted_msg"]
+    // //     if (msg_text == 400) {
+    // //         return
+    // //     }
+    // //     else {
+    // //         window.location.href = "http://localhost:8080/"
+    // //     }
+    // // }
+}
