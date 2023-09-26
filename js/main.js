@@ -64,6 +64,7 @@ function keyChange(object) {
     elem.id = "login_btn"
     elem.type = "submit"
     elem.value = "Войти"
+    elem.className="btn_login_style"
 
     if (object.value) {
         if (!btn_log) {
@@ -163,7 +164,7 @@ async function checkRadio(object) {
 
 
     if (parent_name == "left_form_div") {
-        elem.innerHTML = '<input type="text" placeholder="VkKey" id="key_obj" oninput="keyChange(this)"><input type="checkbox" id="remember_checkbox"><label for="remember_checkbox">Запомнить</label>'
+        elem.innerHTML = '<input class="vk_key_input" type="text" placeholder="VkKey" id="key_obj" oninput="keyChange(this)"><input type="checkbox" id="remember_checkbox"><label for="remember_checkbox">Запомнить</label>'
     }
 
     else if (parent_name == "right_form_div") {
@@ -324,7 +325,6 @@ function scroolToEnd() {
     let end = document.getElementById("end")
     console.log(end)
     end.scrollIntoView()
-    // loadForAwaitTemplate()
 }
 
 async function loadForDialogTemplate() {
@@ -354,7 +354,7 @@ async function loadForAwaitTemplate() {
     let userAlias = prompt("Какой у вас будет логин?")
 
     let host = window.location.href.split("/")[2]
-    let response = await fetch(`https://${host}/allowed`, {
+    let response = await fetch(`https://${host}:${PORT}/allowed`, {
         "method": "POST",
         "mode": "cors",
         "headers": {

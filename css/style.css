@@ -1,3 +1,13 @@
+:root {
+    --time_animation: 0.4s;
+}
+
+body {
+    background-color: #202020;
+}
+
+
+
 td {
     /* задаем границу для всех элементов */
     border: 3px solid grey;
@@ -25,11 +35,82 @@ th {
 }
 
 .container {
-    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 900px;
+    height: 500px;
     padding: 0;
     margin: 0 auto;
+
+    margin-top: 15px;
+    background-color: #333;
+    border-radius: 8px;
+
+    -webkit-text-fill-color: #eee;
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: 400;
+
 }
 
+.main_title {
+    margin: 25px;
+    font-size: 45px;
+}
+
+.login_h2 {
+    font-size: 30px;
+    margin-bottom: 25px;
+}
+
+label {
+    font-size: 20px;
+}
+
+.label_style_left_text {
+    margin-right: 50px;
+}
+
+.radio_right {
+    margin-left: 50px;
+}
+
+.vk_key_input {
+    margin: 20px;
+    width: 300px;
+    height: 20px;
+}
+
+
+
+input, select, textarea {
+    color: red;
+    }
+    
+.btn_login_style {
+    width: 175px;
+    height: 125px;
+    background-color: #202020;
+    border-radius: 8px;
+    /* border: 1px solid none; */
+    border: none;
+}
+
+.btn_login_style:hover {
+    background-color: #444619;
+    transition: var(--time_animation);
+}
+
+.btn_login_style:focus {
+    background-color: #999e33;
+    transition: var(--time_animation);
+}
+
+.btn_login_style:active {
+    transition: var(--time_animation);
+}
 
 .table_with_key {
    display: flex;
@@ -40,16 +121,32 @@ th {
     display: flex;
     flex-direction: row;
 
-    margin-bottom: 5px;
-
-    border: 1px solid gray;
-    border-radius: 5px;
+    border: 1px solid #333;
+    border-radius: 15px;
 }
 
 .key_id {
-    margin-left: 10px;
+    /* border: 1px solid #202020; */
+    padding-top: 50px;
+    padding-left: 25px;
+    font-size: 50px;
 }
 
 .key_value {
+    width: 500px;
     margin-left: 50px;
+    padding: 15px;
+    font-size: 20px;
+    word-break: break-all;
+    border-radius: 8px;
+
+    /* border: none; */
 }
+
+
+.table_with_key {
+    background-color: #202020;
+    border: none;
+    border-radius: 15px;
+    margin-top: 25px;
+}   
