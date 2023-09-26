@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-import asyncio
-
 import aiofiles
-import fastapi.responses
-from cryptography.fernet import Fernet
 from pathlib import Path
 from fastapi import Request, Response
 from vkapi import app, TOKEN
 from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Message, GuestModel, GuestDataModel
 from database import _get_keys, _save_vk_token, _add_host_guest, _get_host_guest_allow, _get_guest_exist, \
     _get_all_guests_with_perm, _set_guest_permission
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.responses import RedirectResponse
 from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
 
@@ -153,7 +149,6 @@ async def get_secret_key():
         if file.is_file():
             async with aiofiles.open(file, "rb") as f:
                 key = await f.read()
-                print(key)
                 return {"key": key}
 
 

@@ -1,5 +1,3 @@
-import asyncio
-
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy import select, update
@@ -83,15 +81,9 @@ async def _get_guest_exist(host, alias):
             guest = await session.execute(select(Guest).where(Guest.guest_host == host, Guest.guest_alias == alias))
             return guest.scalar()
 
+
 async def _get_all_guests_with_perm():
     async with async_session() as session:
         async with session.begin():
             guests = await session.execute(select(Guest))
             return guests.scalars().all()
-            # print(guests.scalars()[0][0].is_allowed)
-            # print(guests.all())
-
-# asyncio.run(_add_host_guest("127.0.0.1", "Binary"))
-# asyncio.run(create_database())
-# asyncio.run(_set_guest_permission("127.0.0.1", "Hocku", True))
-# asyncio.run(_get_all_guests_with_perm())

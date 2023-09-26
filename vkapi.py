@@ -7,13 +7,13 @@ from aiohttp import ClientSession
 from dataclasses import dataclass
 from pathlib import Path
 
+TOKEN = ""
+
 HEAD_LOGIN = {
-    "Authorization": "Bearer vk1.a.Bxln2YFBIkqt7INbF3zOtsTcwko7xKqdsevKY01kvRQ2od_ZeUO3vTgBFzN6PDFppC3HuLC0BpcNA1TVcEMNghLzoMFcMr_82dBwLPFYc_V6sdgRBba-s0hY2E8EjQAPGAofJkNv4ufnbJuEyB_B09KpGKZEohAOP58bvFx5hR1LxjvUP9UhID1wFTaAMU9u4tzt3J8FluapQq7AxGdsbw"
+    "Authorization": f"Bearer {TOKEN}"
 }
 
 app = FastAPI()
-
-TOKEN = ""
 
 app.mount(
     "/css",
@@ -135,6 +135,7 @@ async def _get_full_dialog(user_id):
     my_profile = await get_profile()
     peer_profile = await get_profile(user_id)
     data["data"] = []
+    image, name = None, None
     for index, msg in enumerate(response["response"]["items"]):
         if my_profile["id"] == msg["from_id"]:
             image = my_profile["image"]
@@ -155,4 +156,3 @@ async def _send_message(message_lex):
     await post_to_vkapi(VkUrlPost(section_api="messages", method="send",
                                   query={"user_id": message_lex["user_id"], "random_id": 0,
                                          "message": message_lex["msg_text"]}))
-
