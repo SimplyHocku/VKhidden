@@ -89,5 +89,3 @@ async def _get_all_guests_with_perm():
         async with session.begin():
             guests = await session.execute(select(Guest))
             return guests.scalars().all()
-
-asyncio.run(create_database())
