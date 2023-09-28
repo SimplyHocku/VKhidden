@@ -11,9 +11,15 @@ from database import _get_keys, _save_vk_token, _add_host_guest, _get_host_guest
 from fastapi.responses import RedirectResponse
 from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message, _check_token_valid
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
+from fastapi import Depends, HTTPException
 
 
 # from vk_crypt import encrypt
+
+def check_host(request: Request):
+    if request.client.host != "127.0.0.1":
+        raise HTTPException(status_code=403, detail="Нет доступа")
+    return True
 
 
 @app.get("/")
@@ -83,7 +89,7 @@ async def check_key_exists():
     return 200 if exists else 400
 
 
-@app.get("/main")
+@app.get("/main", dependencies=[Depends(check_host)])
 async def main(request: Request):
     if os.getenv("TOKEN"):
         a = await get_dialogs_html()
@@ -92,7 +98,7 @@ async def main(request: Request):
         return RedirectResponse("/")
 
 
-@app.get("/main/{dialog_id}")
+@app.get("/main/{dialog_id}", dependencies=[Depends(check_host)])
 async def get_dialog_by_id(request: Request, dialog_id):
     a = await _get_full_dialog(dialog_id)
     return templates.TemplateResponse("dialog_html.html", {"request": request, "data": a})
@@ -155,7 +161,7 @@ async def get_secret_key():
                 return {"key": key}
 
 
-@app.get("/set_up_access")
+@app.get("/set_up_access", dependencies=[Depends(check_host)])
 async def set_up_access(request: Request):
     guests = await _get_all_guests_with_perm()
 
