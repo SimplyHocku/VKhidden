@@ -356,9 +356,9 @@ async function loadForDialogTemplate() {
 
 async function loadForAwaitTemplate() {
     let userAlias = prompt("Какой у вас будет логин?")
-
+    console.log(359)
     let host = window.location.href.split("/")[2]
-    let response = await fetch(`https://${host}:${PORT}/allowed`, {
+    let response = await fetch(`https://${host}/allowed`, {
         "method": "POST",
         "mode": "cors",
         "headers": {
