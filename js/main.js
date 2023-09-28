@@ -9,7 +9,8 @@ function checkElement(element) {
     }
 }
 
-async function getFullDialogSend(object) {
+function getFullDialogSend(object) {
+    console.log("send", object)
 
     window.location.href = `http://localhost:${PORT}/main/${object.id}`
 
@@ -108,9 +109,10 @@ async function loginSend() {
         })
 
 
-        if (response.ok == 200) {
+        if (response.ok) {
             let code = await response.json()
-            if (code == 200) {
+            if (code["status_code"] == "200") {
+                console.log("200")
                 window.location.href = `http://localhost:${PORT}/main`
             }
 
@@ -139,7 +141,7 @@ async function loginRememberSend(object) {
 
         if (response.ok) {
             let code = await response.json()
-            if (code == 200) {
+            if (code["status_code"] == "200") {
                 window.location.href = `http://localhost:${PORT}/main`
             }
 

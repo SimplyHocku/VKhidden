@@ -60,7 +60,7 @@ async def login(params: KeyResponse):
     os.environ["TOKEN"] = params["key"]
     if params["remember"]:
         await _save_vk_token(params["key"])
-    return 200
+    return {"status_code": "200"}
 
 
 @app.post("/is_login")
@@ -101,6 +101,7 @@ async def create_secret_key(name: SecretKey):
 @app.post("/send_message")
 async def send_key(message: Message):
     code = 200
+    print(message)
     message = message.model_dump()
     if message["crypt"]:
         message["msg_text"] = await encrypt_message(message["msg_text"])

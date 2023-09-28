@@ -1,6 +1,14 @@
+:root {
+    --time_animation: 0.4s;
+    --black_background: #202020;
+    --brighter_background: #333;
+    --font_color_text: #eee
+}
+
+
 img {
-    width: 50px;
-    height: 50px;
+    width: 62.5px;
+    height: 62.5px;
 
     border-radius: 50%;
 }
@@ -10,9 +18,11 @@ img {
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    height: 100vh;
+    /* height: 100vh; */
     overflow: hidden;
+    background-color: var(--black_background);
+    font-family: sans-serif;
+    color: var(--font_color_text)
 }
 
 .main {
@@ -28,16 +38,39 @@ body {
     top: 30px;
     flex-direction: column;
     margin-left: 100px;
+    margin-top: 25px;
+    background-color: var(--brighter_background);
+    border-radius: 8px;
+    padding: 25px;
+    color: var(--font_color_text);
 
 }
 
 .left_side_inner {
     display: flex;
     flex-direction: row;
+    padding-bottom: 10px;
 }
 
+
+.menu_btn {
+    color: var(--font_color_text);
+}
+
+.menu_btn:hover {
+    color: red;
+    transition: var(--time_animation);
+}
+
+
 .vk_icon {
+    fill: #eee;
     margin-right: 5px;
+}
+
+.vk_icon:hover {
+    fill: red;
+    transition: var(--time_animation);
 }
 
 .inner_left {
@@ -51,6 +84,7 @@ body {
     margin-top: 30px;
     flex-direction: row;
     width: 1500px;
+    background-color: var(--brighter_background);
 }
 
 .right_side_main {
@@ -62,14 +96,23 @@ body {
 }
 
 .right_side_inner_content {
+    /* overflow: auto; */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     display: flex;
     flex-direction: column;
     position: absolute;
     margin-left: 400px;
+    margin-top: 25px;
     height: 500px;
     overflow-y: auto;
     border-radius: 10px;
     background-color: rgba(130, 84, 247, 0.1);
+}
+
+.right_side_inner_content::-webkit-scrollbar {
+    width: 0;
+    height: 0;
 }
 
 .message {
@@ -79,12 +122,13 @@ body {
 
 .content {
     display: flex;
-    width: 600px;
-    height: 50px;
+    width: 750px;
+    height: 63.5px;
     align-items: center;
     padding-top: 15px;
     padding-bottom: 15px;
 
+    background-color: var(--brighter_background);
     border-bottom: 1px solid gray;
 }
 
@@ -95,13 +139,16 @@ body {
 
 .content:hover {
     background-color: whitesmoke;
+    color: var(--brighter_background);
     opacity: 0.9;
     border-radius: 10px;
+    transition: var(--time_animation);
 }
 
 .content:active {
-    background-color: rgba(182,216,227,1);
+    background-color: rgba(182, 216, 227, 1);
     border-radius: 10px;
+    transition: var(--time_animation);
 }
 
 
@@ -112,7 +159,15 @@ body {
 .btn_side {
     position: fixed;
     top: 30px;
-    margin-left: 1050px;
+    margin-left: 1200px;
+    margin-top: 30px;
+}
+
+.usually_btn {
+    background-color: var(--brighter_background);
+    color: #eee;
+    border-radius: 8px;
+    padding: 10px;
 }
 
 .send_msg_text {
@@ -122,10 +177,13 @@ body {
     /* position: fixed; */
     margin-left: 400px;
     border-radius: 10px;
-    background-color: whitesmoke;
+    background-color: var(--brighter_background);
+    padding: 10px;
 }
 
 .send_msg_block {
     position: fixed;
     bottom: 100px;
 }
+
+
