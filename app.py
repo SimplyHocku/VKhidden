@@ -9,7 +9,7 @@ from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Messag
 from database import _get_keys, _save_vk_token, _add_host_guest, _get_host_guest_allow, _get_guest_exist, \
     _get_all_guests_with_perm, _set_guest_permission
 from fastapi.responses import RedirectResponse
-from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message
+from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message, _check_token_valid
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
 
 
@@ -58,9 +58,14 @@ async def get_keys():
 async def login(params: KeyResponse):
     params = params.model_dump()
     os.environ["TOKEN"] = params["key"]
-    if params["remember"]:
-        await _save_vk_token(params["key"])
-    return {"status_code": "200"}
+    valid = await _check_token_valid()
+    if valid == "200":
+        if params["remember"]:
+            await _save_vk_token(params["key"])
+        return {"status_code": "200"}
+    else:
+        os.environ.pop("TOKEN")
+        return {"status_code": "400"}
 
 
 @app.post("/is_login")
@@ -101,7 +106,6 @@ async def create_secret_key(name: SecretKey):
 @app.post("/send_message")
 async def send_key(message: Message):
     code = 200
-    print(message)
     message = message.model_dump()
     if message["crypt"]:
         message["msg_text"] = await encrypt_message(message["msg_text"])

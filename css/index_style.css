@@ -175,15 +175,18 @@ body {
     height: 40px;
     /* bottom: auto; */
     /* position: fixed; */
-    margin-left: 400px;
+    
     border-radius: 10px;
-    background-color: var(--brighter_background);
-    padding: 10px;
+    
 }
 
 .send_msg_block {
     position: fixed;
     bottom: 100px;
+    margin-left: 400px;
+    background-color: var(--brighter_background);
+    padding: 15px;
+    border-radius: 8px;
 }
 
 

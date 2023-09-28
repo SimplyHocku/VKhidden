@@ -112,8 +112,10 @@ async function loginSend() {
         if (response.ok) {
             let code = await response.json()
             if (code["status_code"] == "200") {
-                console.log("200")
                 window.location.href = `http://localhost:${PORT}/main`
+            }
+            else {
+                alert("Введенный токен недействительный")
             }
 
         }

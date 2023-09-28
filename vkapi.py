@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 import jinja2
@@ -8,7 +9,6 @@ from fastapi import FastAPI
 from aiohttp import ClientSession
 from dataclasses import dataclass
 from pathlib import Path
-
 
 app = FastAPI()
 
@@ -155,3 +155,9 @@ async def _send_message(message_lex):
     await post_to_vkapi(VkUrlPost(section_api="messages", method="send",
                                   query={"user_id": message_lex["user_id"], "random_id": 0,
                                          "message": message_lex["msg_text"]}))
+
+
+async def _check_token_valid():
+    valid_token = await post_to_vkapi(
+        VkUrlPost(section_api="account", method="getProfileInfo"))
+    return "400" if valid_token.get("error") is not None else "200"
