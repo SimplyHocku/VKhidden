@@ -1,8 +1,10 @@
+import asyncio
+
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy import select, update
 
-DB = "sqlite+aiosqlite:///key.db"
+DB = "sqlite+aiosqlite:///db/key.db"
 engine = create_async_engine(DB)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 Base = declarative_base()
@@ -87,3 +89,5 @@ async def _get_all_guests_with_perm():
         async with session.begin():
             guests = await session.execute(select(Guest))
             return guests.scalars().all()
+
+asyncio.run(create_database())
