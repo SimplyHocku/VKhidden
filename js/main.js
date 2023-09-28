@@ -1,4 +1,4 @@
-const PORT = 8080
+const PORT = 8081
 
 function checkElement(element) {
     if (element) {
@@ -389,3 +389,12 @@ async function loadForAwaitTemplate() {
     }
 }
 
+
+
+async function checkExistDB() {
+    let response = await fetch(`http://localhost:${PORT}/check_db`, {
+        "method": "POST",
+        "mode": "cors",
+        "headers": {
+            "Content-Type": "application/json"
+        },})}

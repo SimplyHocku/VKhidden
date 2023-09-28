@@ -7,7 +7,7 @@ from fastapi import Request, Response
 from vkapi import app
 from models import KeyResponse, UserIdResponse, MsgForEncrypt, SecretKey, Message, GuestModel, GuestDataModel
 from database import _get_keys, _save_vk_token, _add_host_guest, _get_host_guest_allow, _get_guest_exist, \
-    _get_all_guests_with_perm, _set_guest_permission
+    _get_all_guests_with_perm, _set_guest_permission, create_database
 from fastapi.responses import RedirectResponse
 from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, templates, _send_message, _check_token_valid
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
@@ -171,6 +171,13 @@ async def permission_changed(guest_data: GuestDataModel):
 @app.post("/get_port")
 async def get_port():
     return {"port": os.environ["CPORT"]}
+
+
+@app.post("/check_db")
+async def check_db():
+    db = Path("db/key.db")
+    if not db.exists():
+        await create_database()
 
 
 def set_port():
