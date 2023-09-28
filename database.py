@@ -1,5 +1,3 @@
-import asyncio
-
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy import select, update

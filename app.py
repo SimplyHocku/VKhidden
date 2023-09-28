@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-
 import aiofiles
 from pathlib import Path
 from fastapi import Request, Response
@@ -13,8 +12,6 @@ from vkapi import get_jinja_render, get_dialogs_html, _get_full_dialog, template
 from vk_crypt import create_key, _check_key_exists, encrypt_message, _decrypt_message
 from fastapi import Depends, HTTPException
 
-
-# from vk_crypt import encrypt
 
 def check_host(request: Request):
     if request.client.host != "127.0.0.1":
